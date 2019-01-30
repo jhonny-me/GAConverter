@@ -7,6 +7,7 @@ var child_process = require('child_process');
 var workloadDir = path.join(__dirname, '..', 'workload')
 var uploadDir = path.join(workloadDir, 'uploaded')
 var script = path.join(__dirname, '..', 'markdownExperiment', 'convertor.py')
+const outputDir = path.join(workloadDir, 'output')
 
 /* GET users listing. */
 router.post('/', function(req, res, next) {
@@ -22,7 +23,13 @@ router.post('/', function(req, res, next) {
 		const handler = child_process.spawn('python', [script, filePath], {cwd: workloadDir})
 
 		handler.stdout.on('data', (data) => {
-			res.json({json: `${data}`})
+			const strippedString = `${data}`.replace(/(\r\n|\n|\r)/gm, "")
+			const swiftPath = path.join(outputDir, `${strippedString}.swift`)
+			const kotlinPath = path.join(outputDir, `${strippedString}.kt`)
+			res.json({
+				swift: `http:\/\/localhost:3000${swiftPath}`,
+				kotlin: `http:\/\/localhost:3000${kotlinPath}`
+			})
 			console.log(`stdout: ${data}`)
 		})
 		handler.stderr.on('data', (data) => {
