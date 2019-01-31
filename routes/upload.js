@@ -24,11 +24,9 @@ router.post('/', function(req, res, next) {
 
 		handler.stdout.on('data', (data) => {
 			const strippedString = `${data}`.replace(/(\r\n|\n|\r)/gm, "")
-			const swiftPath = path.join(outputDir, `${strippedString}.swift`)
-			const kotlinPath = path.join(outputDir, `${strippedString}.kt`)
 			res.json({
-				swift: `http:\/\/localhost:3000${swiftPath}`,
-				kotlin: `http:\/\/localhost:3000${kotlinPath}`
+				swift: `http:\/\/localhost:8000/download/${strippedString}.swift`,
+				kotlin: `http:\/\/localhost:8000/download/${strippedString}.kt`
 			})
 			console.log(`stdout: ${data}`)
 		})
